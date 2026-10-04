@@ -357,7 +357,7 @@ The panel above each chapter lets readers change day/night mode, font and font s
 
 ### Continue reading
 
-When a reader scrolls to the bottom of a chapter, `js/reader.js` saves it as that series' bookmark (in the browser only). On the series page, `_includes/series-toc.html` then shows:
+When a reader scrolls to the bottom of a chapter, `js/bookmark.js` saves it as that series' bookmark (in the browser only). On the series page, `_includes/series-toc.html` then shows:
 
 - **Continue reading: Chapter N** (the saved chapter)
 - **Read next chapter: Chapter N+1**, when chapter N+1 exists in the series

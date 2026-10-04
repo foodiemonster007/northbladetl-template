@@ -21,10 +21,10 @@ toc_per_page: 100
 
 # Comments (giscus). Values come from https://giscus.app; see README.
 giscus:
-  repo: "foodiemonster007/jekyll-template"
-  repo_id: "R_kgDOU7FQuQ"
+  repo: "foodiemonster007/northbladetl-template"
+  repo_id: "R_kgDOU7W3-A"
   category: "Comments"
-  category_id: "DIC_kwDOU7FQuc4DHAGl"
+  category_id: "DIC_kwDOU7W3-M4DHBE3"
 
 include:
   - ".well-known"
