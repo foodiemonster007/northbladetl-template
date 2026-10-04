@@ -65,13 +65,13 @@ GitHub Desktop is a free app that moves your files between your computer and Git
 2. Open it and sign in with your GitHub account.
 3. Click **File > Clone repository**. On the **GitHub.com** tab, click your new repository in the list.
 4. Under **Local path**, choose where to keep it, for example your Documents folder. Click **Clone**.
-5. To edit files you need a text editor. A good free one is Visual Studio Code: https://code.visualstudio.com. In GitHub Desktop click **Repository > Open in Visual Studio Code**.
+5. To edit files you need a text editor. A good free-to-use one is Sublime Text: https://www.sublimetext.com (download and install it). Then tell GitHub Desktop to use it: click **File > Options > Integrations**, set **External editor** to **Sublime Text**, and click **Save**. From now on **Repository > Open in Sublime Text** opens your whole project.
 
 The template ships with two sample series (`ABC` and `XYZ`) as examples. Replace them with your own (see [Adding series and chapters](#4-adding-series-and-chapters)).
 
 ### Step 5: Run the site on your computer
 
-1. In GitHub Desktop click **Repository > Open in Command Prompt** (or **Open in PowerShell**). A terminal opens inside your project folder. In Visual Studio Code you can use **Terminal > New Terminal** instead.
+1. In GitHub Desktop click **Repository > Open in Command Prompt** (or **Open in PowerShell**). A terminal opens inside your project folder.
 2. Run these two commands, one at a time:
 
    ```
@@ -88,12 +88,12 @@ Search the project for the placeholder text below. Nothing here works until you 
 
 **How to edit a file** (the same for every change in this guide):
 
-1. Open your project folder in Visual Studio Code. In GitHub Desktop click **Repository > Open in Visual Studio Code**.
-2. Open the file named in the instructions: press **Ctrl+P**, type the file name, press **Enter**.
-3. Press **Ctrl+F** to search inside the file. Find the text shown in the instructions and replace it with the new text. Copy text exactly, including quotes, brackets and spaces.
+1. Open your project folder in Sublime Text. In GitHub Desktop click **Repository > Open in Sublime Text**. The files appear in a list on the left.
+2. Open the file named in the instructions: press **Ctrl+P**, type the file name, press **Enter**. (Or click it in the list on the left.)
+3. Press **Ctrl+F** to search inside the file (or **Ctrl+H** to find and replace). Find the text shown in the instructions and replace it with the new text. Copy text exactly, including quotes, brackets and spaces.
 4. Press **Ctrl+S** to save. If the site is running on your computer (Step 5), refresh http://localhost:4000 to see the change.
 
-Press **Ctrl+Shift+F** to search every file in the project at once. In `.yml` files and at the top of pages (between the `---` lines), use spaces, never the Tab key, and keep the indentation the same as the lines around it.
+Press **Ctrl+Shift+F** to search every file in the project at once. In `.yml` files and at the top of pages (between the `---` lines), use spaces, never the Tab key, and keep the indentation the same as the lines around it. In Sublime Text, click **View > Indentation > Indent Using Spaces** once so the Tab key types spaces.
 
 | Replace | Where |
 | --- | --- |
