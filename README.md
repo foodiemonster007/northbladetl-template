@@ -19,6 +19,7 @@ A dark, mobile-friendly Jekyll site for publishing serialized chapters (novels, 
 7. [Reader features](#7-reader-features)
 8. [Comments](#8-comments)
 9. [Deploying](#9-deploying)
+10. [Appendix: how the reader features work](#appendix-how-the-reader-features-work)
 
 ---
 
@@ -52,7 +53,7 @@ A repository ("repo") is the online folder that holds your site's files.
 
 1. Open this template's page on GitHub.
 2. Click the green **Use this template** button (top right), then **Create a new repository**. If there is no such button, click **Fork** instead.
-3. Under **Repository name**, type a name with no spaces, for example `my-novel-site`. The name becomes part of your site's address: `https://YOUR-USERNAME.github.io/my-novel-site/`. If you want the shorter address `https://YOUR-USERNAME.github.io/`, name the repository exactly `YOUR-USERNAME.github.io`.
+3. Under **Repository name**, type a name with no spaces, for example `my-novel-site`. The name becomes part of your site's address: `https://YOUR-USERNAME.github.io/my-novel-site/`. If you name the repository exactly `YOUR-USERNAME.github.io` (your GitHub username followed by `.github.io`), the site's address is `https://YOUR-USERNAME.github.io/`, with nothing after it.
 4. Choose **Public**. GitHub Pages (free hosting) and the comments both need a public repository.
 5. Click **Create repository**.
 
@@ -105,7 +106,7 @@ GitHub Pages hosts your site for free. Do these in order.
 1. **Turn on Pages.** On github.com open your repository, click **Settings**, then **Pages** in the left sidebar. Under **Build and deployment**, set **Source** to **GitHub Actions**.
 2. **Upload your changes.** In GitHub Desktop you will see your edited files listed on the left. Type a short summary such as `Set up my site` in the box at the bottom left, click **Commit to main**, then click **Push origin** at the top.
 3. **Watch it build.** On github.com click the **Actions** tab. A run called **Deploy Jekyll site to Pages** starts by itself. Wait about a minute for a green tick. If nothing started, click that workflow name, then **Run workflow**. (If you used Fork, GitHub first asks you to click **I understand my workflows, go ahead and enable them**.)
-4. **Open your site.** Go back to **Settings > Pages**. The address is at the top: `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/`.
+4. **Open your site.** Go back to **Settings > Pages**. The address is at the top: `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/`, or just `https://YOUR-USERNAME.github.io/` if you named the repository `YOUR-USERNAME.github.io`.
 5. **Set the address.** Open `_config.yml`, change `url:` to `https://YOUR-USERNAME.github.io` (no repository name, no trailing slash), then repeat step 2 to upload the change.
 
 Every time you edit your files and commit and push in GitHub Desktop, the site rebuilds and updates by itself in about a minute.
@@ -387,7 +388,84 @@ A page shows comments only if its front matter has `comments: true`. Set it to `
 ## 9. Deploying
 
 - Use the included workflow, `.github/workflows/jekyll.yml`: in your repository go to **Settings > Pages** and set **Source** to **GitHub Actions**. Every push to `main` then builds and publishes the site.
-- The site works at the root of a domain (`https://you.github.io/`, a custom domain) and in a subfolder (`https://you.github.io/my-repo/`). The workflow sets the subfolder automatically. All links and file paths in the templates go through Jekyll's `relative_url`, so keep that when you add new ones, for example `href="{{ '/css/new.css' | relative_url }}"`.
+- The site works at the root of a domain (`https://you.github.io/`, a custom domain) and in a subfolder (`https://you.github.io/my-repo/`). A repository named exactly `you.github.io` is served at the root, `https://you.github.io/`. The workflow sets the subfolder automatically. All links and file paths in the templates go through Jekyll's `relative_url`, so keep that when you add new ones, for example `href="{{ '/css/new.css' | relative_url }}"`.
 - Set `url` in `_config.yml` to your site's address (for example `"https://you.github.io"`, without the repository name) so sitemap and link-preview addresses are correct.
 - Update the `robots.txt` header and rules to suit your site. Note that `robots.txt` only works when the site is at the root of a domain, not in a subfolder.
 - Search engines can read chapter text, because it is in the page itself.
+
+## Appendix: how the reader features work
+
+These features run in the reader's browser. Nothing is sent to a server: every choice is saved in the browser's `localStorage`, so it stays on that reader's device and browser only, and is lost if they clear their site data.
+
+### Which files each feature uses
+
+| Feature | JavaScript | CSS | HTML (layouts and includes) | Assets |
+| --- | --- | --- | --- | --- |
+| Day/night mode | `js/changeMode.js` | `css/designs.css` (`.night-mode`, `.day-mode`, `.day-mode-heading`, quote colours) | `_includes/JS_buttons.html` (button), `_layouts/default.html` (`#wrappertext`), `_layouts/post.html` (`#chapterTitle`), `_includes/comments.html` (comment theme) | none |
+| Font family | `js/changeMode.js` | `assets/main.css` (`@font-face` blocks) | `_includes/JS_buttons.html` (dropdown), `_layouts/default.html` (`#wrappertext`) | `assets/fonts/` |
+| Font size | `js/changeMode.js` | `assets/main.css` (base size) | `_includes/JS_buttons.html` (buttons), `_layouts/post.html` (`#content`) | none |
+| Reader Settings panel (opens and closes) | `js/changeMode.js` | `assets/main.css` (`.collapsible`, `.site-settings`) | `_includes/JS_buttons.html` | none |
+| Last read chapter | `js/bookmark.js` (saves), and the script at the bottom of `_includes/series-toc.html` (shows) | the `<style>` block in `_includes/series-toc.html` (`.toc-continue...`) | `_layouts/post.html` (loads `bookmark.js`, marks the chapter text), `_layouts/series.html` (includes the list), `_includes/series-toc.html` | none |
+
+`js/changeMode.js` is loaded on every page from `_includes/head.html`. `js/bookmark.js` is loaded only on chapter pages, at the bottom of `_layouts/post.html`.
+
+### What is saved in the browser
+
+| Key | Holds | Written by |
+| --- | --- | --- |
+| `colorScheme` | `day` or `night` | `js/changeMode.js` |
+| `selectedFont` | a font name such as `Literata` | `js/changeMode.js` |
+| `fontSize` | a size such as `18px` | `js/changeMode.js` |
+| `lastRead:<series>` | the furthest chapter read in that series: its number, id, address and title | `js/bookmark.js` |
+| `tocSortOrder` | `newest` or `oldest` (the chapter list sort button) | `_includes/series-toc.html` |
+
+### Day/night mode
+
+1. The page starts in night mode. The reading area (`<div id="wrappertext">` in `_layouts/default.html`) has the class `night-mode`, and `css/designs.css` gives that class its dark background and light text.
+2. The **Change Mode** button in `_includes/JS_buttons.html` calls `changeWrapColor()` in `js/changeMode.js`.
+3. That function checks whether `#wrappertext` already has the class `day-mode`, then calls `setMode()` with the opposite choice and saves `day` or `night` under `colorScheme`.
+4. `setMode()` adds or removes `day-mode` on `#wrappertext`. It also adds or removes `day-mode-heading` on the chapter title (`#chapterTitle` in `_layouts/post.html`) and `day-mode-quotes` on every block quote. `css/designs.css` defines the day colours for each of those classes.
+5. When any page loads, `applySavedSettings()` in `js/changeMode.js` reads `colorScheme` and calls `setMode()` again, so the choice carries over to every page.
+6. The comment box follows along: `_includes/comments.html` listens for the same button and tells the giscus comment frame to switch between its `dark` and `light` themes.
+
+### Font family
+
+1. The five fonts are declared with `@font-face` at the top of `assets/main.css`. Each one points at a file in `assets/fonts/`. A font only downloads when a page actually uses it.
+2. The dropdown in `_includes/JS_buttons.html` lists them. Choosing one calls `changeFontFamily(name)` in `js/changeMode.js`.
+3. That calls `setSelectedFont()`, which looks the name up in the `FONT_STACKS` table at the top of `js/changeMode.js`. The table maps each name to a full CSS `font-family` list (the font, a generic fallback such as `sans-serif`, and emoji fonts).
+4. `setSelectedFont()` sets that list on `#wrappertext`, which makes it the font of everything inside it, and saves the name under `selectedFont`.
+5. On page load, `applySavedSettings()` reads `selectedFont`, applies it, and sets the dropdown to match. If nothing is saved, Helvetica is used.
+
+To add or remove a font, see [Fonts](#fonts) in section 6.
+
+### Font size
+
+1. The chapter text sits in `<div id="content">` in `_layouts/post.html`, which starts at `16px`.
+2. The three buttons in `_includes/JS_buttons.html` call `changeFontSize(-1)`, `changeFontSize(0)` and `changeFontSize(1)` in `js/changeMode.js`.
+3. For `-1` and `+1`, the function reads the current size of `#content`, adds or subtracts 1 pixel, and for `0` it resets to `16px`.
+4. `setFontSize()` sets that size on `#content` and on every block quote, so quotes stay the same size as the text. The size is saved under `fontSize`.
+5. On page load, `applySavedSettings()` reads `fontSize` and applies it. This only has an effect on chapter pages, because only they have `#content`.
+
+### Reader Settings panel
+
+The panel is `<div class="site-settings">` in `_includes/JS_buttons.html`, directly after the **Reader Settings** button. In `assets/main.css` the panel starts collapsed (`max-height: 0`). The last part of `js/changeMode.js` listens for clicks on the button and sets the panel's height to its full content height, or back to nothing, so it slides open and closed.
+
+### Last read chapter
+
+**Saving it (`js/bookmark.js`, chapter pages only)**
+
+1. `_layouts/post.html` puts the series name on the chapter text as `data-series="..."` (on `<div id="navibar">`).
+2. When the page loads, `bookmark.js` places a 1-pixel empty element right after the chapter text and watches it with the browser's `IntersectionObserver`. When it scrolls into view, the reader has reached the end of the chapter.
+3. It then reads the series from `data-series`, and the chapter id from the end of the page address (for example `ABC012` from `.../abc/ABC012.html`). The number is the digits at the end of the id.
+4. It compares that number with the one already saved under `lastRead:<series>`. If the saved number is equal or higher, it does nothing, so the bookmark never goes backwards.
+5. Otherwise it saves the number, id, page address and chapter title (read from `#chapterTitle`).
+
+**Showing it (`_includes/series-toc.html`, series pages only)**
+
+1. The script at the bottom of the include reads `lastRead:<series>` for that series.
+2. If there is one, it fills in and reveals the **Continue reading** box above the chapter list, linking to the saved chapter. Without a saved chapter the box stays hidden.
+3. For **Read next chapter**, it adds 1 to the saved chapter number, keeping the same id prefix and zero padding (`ABC009` becomes `ABC010`), and looks for a link with that id in the chapter list. If the chapter exists, the link is shown.
+4. This runs before the list script that hides chapters beyond the first 100, so the whole list is available to search.
+5. **Reset** deletes the saved value and hides the box.
+
+For this to work, chapter files must end in a number (see [A new chapter](#a-new-chapter) in section 4).
