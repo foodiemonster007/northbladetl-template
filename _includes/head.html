@@ -1,0 +1,42 @@
+<head>
+  {%- include google-analytics.html -%}
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ '/assets/main.css?v=1.27' | relative_url }}">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+
+  {%- assign final_description = site.tagline -%}
+
+  {%- assign head_series = page.categories | first -%}
+  {%- if head_series and site.data.series[head_series] -%}
+    {%- assign final_description = site.data.series[head_series].full_name | append: ' ' | append: page.title -%}
+  {%- endif -%}
+
+  {%- if page.description -%}
+    {%- assign final_description = page.description -%}
+  {%- endif -%}
+
+  <meta name="description" content="{{ final_description | strip_html | strip_newlines | truncatewords: 25, '...' }}">
+  <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+  <meta property="og:description" content="{{ final_description | strip_html | strip_newlines | truncatewords: 25, '...' }}" />
+  <meta property="og:url" content="{{ page.url | absolute_url }}" />
+  <meta property="og:site_name" content="{{ site.title }}" />
+
+  <!-- highlight.js support -->
+  <link rel="stylesheet" href="{{ '/js/highlightjs/styles/format.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/js/highlightjs/styles/ssms.css' | relative_url }}" />
+  <link rel="stylesheet" href="{{ '/css/designs.css?v=1.05' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/css/head.css?v=1.58' | relative_url }}">
+  <script type="text/javascript" src="{{ '/js/highlightjs/highlight.min.js' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/js/highlightjs/languages/plaintext.min.js' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/js/highlightjs/languages/powershell.min.js' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/js/highlightjs/languages/tsql.min.js' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/js/navBar.js?v=1.11' | relative_url }}"></script>
+  <script type="text/javascript" src="{{ '/js/changeMode.js?v=1.11' | relative_url }}"></script>
+  <script type="text/javascript"> hljs.highlightAll(); </script>
+  <!-- end highlight.js support -->
+
+
+
+</head>

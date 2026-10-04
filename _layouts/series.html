@@ -1,0 +1,23 @@
+---
+layout: default
+---
+{% comment %}
+  Series landing page: the page body (synopsis) followed by the chapter list
+  from _includes/series-toc.html.
+{% endcomment %}
+<article class="post">
+
+  <header class="post-header">
+<br />
+    <h1 class="post-title">{{ page.title | escape }}</h1>
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+
+    {% include series-toc.html %}
+  </div>
+
+</article>
+
+{% include comments.html %}

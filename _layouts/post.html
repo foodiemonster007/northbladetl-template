@@ -1,0 +1,82 @@
+---
+layout: default
+---
+<link href="{{ '/css/override.css?v=1.05' | relative_url }}" rel="stylesheet" type="text/css">
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+{% assign series_tag = page.categories | first | downcase %}
+{% assign series_data = site.data.series[series_tag] %}
+
+{% comment %} Find this chapter's neighbours within its own series. {% endcomment %}
+{% assign series_posts = site.categories[series_tag] | sort: 'date' %}
+{% assign prev_post = nil %}
+{% assign next_post = nil %}
+{% for p in series_posts %}
+  {% if p.url == page.url %}
+    {% assign idx = forloop.index0 %}
+    {% if idx > 0 %}
+      {% assign prev_idx = idx | minus: 1 %}
+      {% assign prev_post = series_posts[prev_idx] %}
+    {% endif %}
+    {% assign next_idx = idx | plus: 1 %}
+    {% assign next_post = series_posts[next_idx] %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+<p><br /></p>
+{% include navigation.html prev=prev_post next=next_post series=series_tag %}
+<hr />
+
+<header id="chapter-title" class="post-header">
+  <br />
+  {% if series_data %}
+    <h2>{{ series_data.full_name }}</h2>
+  {% else %}
+    <h2>{{ series_tag | upcase }}</h2>
+  {% endif %}
+
+  <h1 id="chapterTitle" class="post-title p-name" itemprop="name headline">
+    {{ page.title | escape }}
+  </h1>
+  <p class="post-meta">
+    <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+      {{ page.date | date: "%Y-%m-%d" }}
+    </time>
+  </p>
+</header>
+
+  <div class="post-content e-content" itemprop="articleBody" lang="ko">
+    <div style="font-size: 16px;" id="content">
+      {% include JS_buttons.html %}
+      <div id="navibar" data-series="{{ series_tag }}">
+{{ content }}
+      </div>
+    </div>
+  <hr>
+    <div class="centersel">
+      <select class="cmb" onchange="location = this.value;" style="width: 350px">
+        <option value="">Select a chapter...</option>
+        {% for p in series_posts %}
+          <option value="{{ p.url | relative_url }}" {% if p.url == page.url %}selected{% endif %}>
+            {{ p.title }}
+          </option>
+        {% endfor %}
+      </select>
+      <p><br /></p>
+    </div>
+    {% include navigation.html prev=prev_post next=next_post series=series_tag %}
+
+    {% if series_data %}
+      <div class="centersel">
+        <p><br /></p>
+        <p>Subscribe to Updates via <a href="{{ 'feed.xml' | relative_url }}">RSS</a>, <a href="https://www.novelupdates.com/series/{{ series_data.nu_slug }}/">Novelupdates</a>, <a href="https://discord.gg/YOUR-INVITE">Discord</a>, <a href="https://t.me/YOUR-CHANNEL">Telegram</a>, or <a href="https://blogtrottr.com/?subscribe={{ 'feed.xml' | absolute_url | url_encode }}">Email</a>!</p>
+        <p><br /></p>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+</article>
+<script src="{{ '/js/reader.js?v=1.00' | relative_url }}"></script>
+{% include comments.html %}

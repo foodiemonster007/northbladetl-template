@@ -1,0 +1,7 @@
+// This file is the central hub. It forwards all theme partials.
+@forward "variables";
+@forward "skins/classic";
+@forward "base";
+@forward "layout";
+@forward "custom-variables";
+@forward "custom-styles";

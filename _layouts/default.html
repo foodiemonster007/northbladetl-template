@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+{%- include head.html -%}
+
+  <body style="background-color: #121212;">
+
+    {%- include header.html -%}
+
+	<main class="page-content" aria-label="Content">
+      <div id="wrappertext" class="wrapper night-mode">
+
+        {% capture sep_html %}<img src="{{ '/Images/sep.png' | relative_url }}" alt="sep">{% endcapture %}
+        {% assign output = content
+			| replace: '{sep}', sep_html
+			| replace: '<div class="footnotes" role="doc-endnotes">', '<hr><h3>Footnotes:</h3><div class="footnotes" role="doc-endnotes">'
+			| replace: '<blockquote>', '<blockquote class="night-mode-quotes">'
+		%}
+		{{output}}
+      </div>
+    </main>
+
+		<a href="{{ '/hunnypot.html' | relative_url }}" style="position:absolute; left:-9999px; top:-9999px;"></a>
+
+		{%- include footer.html -%}
+
+  </body>
+
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
+</html>

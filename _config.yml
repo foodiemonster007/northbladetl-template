@@ -1,0 +1,30 @@
+title: Your Site Title
+tagline: Read free English fan translations of novels. No ads, no paywalls. Updated regularly.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://example.com" # the base hostname & protocol for your site
+markdown: kramdown
+markdown_ext: md
+kramdown:
+  parse_block_html: true
+  smart_quotes: ["apos", "apos", "quot", "quot"]
+# Chapters live at /<series>/<FILENAME>.html, e.g. /abc/ABC001.html
+permalink: /:categories/:title:output_ext
+
+# Build settings
+plugins:
+  - jekyll-sitemap
+
+# Chapter list: how many chapters each series page shows at first, and how many
+# more each "Show More" click adds. All series use this; a series can override
+# it with `per_page:` in its own index.html.
+toc_per_page: 100
+
+# Comments (giscus). Values come from https://giscus.app; see README.
+giscus:
+  repo: "foodiemonster007/jekyll-template"
+  repo_id: "R_kgDOU7FQuQ"
+  category: "Comments"
+  category_id: "DIC_kwDOU7FQuc4DHAGl"
+
+include:
+  - ".well-known"

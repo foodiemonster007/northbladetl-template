@@ -1,0 +1,69 @@
+/* Colours for the site header, headings, links and the night/day reading modes. */
+
+.site-header {
+  background-color: #b9b1d6;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #b9b1d6;
+}
+
+/* Night mode is the default. The Day/Night button adds .day-mode. */
+
+.night-mode {
+  background-color: #292929;
+  color: #E0E0E0;
+}
+
+.night-mode-quotes {
+  color: #fcd299;
+}
+
+.day-mode {
+  background-color: #F0F0F0;
+  color: #222;
+}
+
+.day-mode-quotes {
+  color: #4e6bf9;
+}
+
+.day-mode-heading {
+  color: #63627f;
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #b9b1d6;
+}
+
+a:link {
+  color: #6fa8dc;
+}
+
+a:hover,
+a:visited {
+  color: #c0d1ce;
+}
+
+a:active {
+  color: #a9a9a9;
+}
+
+/* Chapter lists have no bullets. */
+ul.toc {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+blockquote {
+  font-style: normal;
+  font-size: 1em;
+  letter-spacing: 0;
+}

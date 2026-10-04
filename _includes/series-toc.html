@@ -1,0 +1,154 @@
+{% comment %}
+  Chapter list for a series page (layout: series), shared by every series.
+  The page lists EVERY chapter in the series. JavaScript then shows them
+  `toc_per_page` at a time (default set in _config.yml, 100), and handles
+  the sort button and the "Show More" button.
+  The series comes from the page's `series:` front matter.
+{% endcomment %}
+{% assign series_tag = page.series | downcase %}
+{% assign tocID = 'toc-' | append: series_tag %}
+{% assign chapters = site.categories[series_tag] | sort: 'date' %}
+{% assign page_size = page.per_page | default: site.toc_per_page | default: 100 %}
+
+<div class="toc-continue" id="toc-continue-{{ series_tag }}" style="display:none">
+  <div class="toc-continue-links">
+    <a class="toc-next-link" href="#" style="display:none"></a>
+    <a class="toc-continue-link" href="#"></a>
+  </div>
+  <button type="button" class="toc-reset-btn">Reset</button>
+</div>
+<div class="toc-controls">
+  <button type="button" class="toc-sort-btn" data-toc-target="{{ tocID }}">Newest First</button>
+  <span class="toc-count" data-toc-count="{{ tocID }}"></span>
+</div>
+<ul class="toc" id="{{ tocID }}">
+  {% for p in chapters %}
+  <li>
+    <a href="{{ p.url | relative_url }}">
+      {{ p.title }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+<div class="toc-more-wrap">
+  <button type="button" class="toc-more-btn" data-toc-target="{{ tocID }}">Show More</button>
+</div>
+
+<style>
+.toc-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(224,224,224,.15)}
+.day-mode .toc-controls{border-bottom-color:rgba(34,34,34,.12)}
+.toc-count{font-size:13px;opacity:.6}
+.toc-sort-btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;border:1px solid #b9b1d6;background:transparent;color:#b9b1d6;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.toc-sort-btn:hover{background-color:#b9b1d6;color:#2b2a3d}
+.toc li{border-bottom:1px solid rgba(224,224,224,.08)}
+.day-mode .toc li{border-bottom-color:rgba(34,34,34,.08)}
+.toc li a{padding:10px 4px}
+.toc-more-wrap{text-align:center;margin-top:18px}
+.toc-more-btn{font:inherit;font-size:14px;font-weight:600;padding:9px 26px;border-radius:999px;border:1px solid #b9b1d6;background:transparent;color:#b9b1d6;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.toc-more-btn:hover{background-color:#b9b1d6;color:#2b2a3d}
+.toc-continue{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.toc-continue-links{display:flex;flex-direction:column;gap:6px}
+.toc-continue-link,.toc-next-link{font-weight:600}
+.toc-reset-btn{margin-left:auto;font:inherit;font-size:13px;padding:5px 14px;border-radius:999px;border:1px solid #b9b1d6;background:transparent;color:#b9b1d6;cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.toc-reset-btn:hover{background-color:#b9b1d6;color:#2b2a3d}
+</style>
+
+<script>
+// "Continue reading": shows the chapter saved by js/reader.js (key
+// lastRead:<series>) and a link to the next chapter. This must run before the
+// list script below, which removes chapters from the page.
+(function(){
+  var box = document.getElementById('toc-continue-{{ series_tag }}');
+  if (!box) return;
+  var key = 'lastRead:{{ series_tag }}';
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(key)); } catch (e) {}
+  if (!saved || typeof saved.url !== 'string' || saved.url.charAt(0) !== '/') return;
+
+  var link = box.querySelector('.toc-continue-link');
+  link.href = saved.url;
+  link.textContent = 'Continue reading: ' + (saved.title || saved.id);
+
+  // Next chapter = saved chapter number + 1 (same id prefix and zero padding),
+  // shown only if that chapter is in the list.
+  var tocList = document.getElementById('{{ tocID }}');
+  var anchors = tocList ? Array.prototype.slice.call(tocList.querySelectorAll('li > a')) : [];
+  function idOf(a){ return (a.getAttribute('href') || '').split('/').filter(Boolean).pop().replace('.html', '').toUpperCase(); }
+  var m = String(saved.id || '').match(/^(.*?)(\d+)$/);
+  if (m) {
+    var nextNum = String(parseInt(m[2], 10) + 1);
+    while (nextNum.length < m[2].length) nextNum = '0' + nextNum;
+    var wanted = (m[1] + nextNum).toUpperCase();
+    for (var i = 0; i < anchors.length; i++) {
+      if (idOf(anchors[i]) === wanted) {
+        var nextLink = box.querySelector('.toc-next-link');
+        nextLink.href = anchors[i].getAttribute('href');
+        nextLink.textContent = 'Read next chapter: ' + anchors[i].textContent.trim();
+        nextLink.style.display = '';
+        break;
+      }
+    }
+  }
+
+  box.style.display = '';
+
+  box.querySelector('.toc-reset-btn').addEventListener('click', function(){
+    try { localStorage.removeItem(key); } catch (e) {}
+    box.style.display = 'none';
+  });
+})();
+
+// Chapter list: shows {{ page_size }} chapters at a time, with a sort button
+// (oldest/newest first, remembered in the browser) and a "Show More" button.
+(function(){
+  var list = document.getElementById('{{ tocID }}');
+  if (!list) return;
+
+  var originalOrder = Array.prototype.slice.call(list.children);
+  var reversedOrder = originalOrder.slice().reverse();
+  var pageSize = {{ page_size }};
+  var shown = pageSize;
+  var newestFirst = false;
+  try { newestFirst = localStorage.getItem('tocSortOrder') === 'newest'; } catch (e) {}
+
+  var sortBtn = document.querySelector('.toc-sort-btn[data-toc-target="{{ tocID }}"]');
+  var moreBtn = document.querySelector('.toc-more-btn[data-toc-target="{{ tocID }}"]');
+  var countEl = document.querySelector('[data-toc-count="{{ tocID }}"]');
+
+  function render(){
+    var order = newestFirst ? reversedOrder : originalOrder;
+    var visible = order.slice(0, shown);
+
+    list.innerHTML = '';
+    visible.forEach(function(li){ list.appendChild(li); });
+
+    if (moreBtn) {
+      moreBtn.style.display = shown < order.length ? '' : 'none';
+    }
+    if (sortBtn) {
+      sortBtn.textContent = newestFirst ? 'Oldest First' : 'Newest First';
+    }
+    if (countEl) {
+      countEl.textContent = 'Showing ' + visible.length + ' of ' + order.length + ' chapters';
+    }
+  }
+
+  if (sortBtn) {
+    sortBtn.addEventListener('click', function(){
+      newestFirst = !newestFirst;
+      shown = pageSize;
+      try { localStorage.setItem('tocSortOrder', newestFirst ? 'newest' : 'oldest'); } catch (e) {}
+      render();
+    });
+  }
+
+  if (moreBtn) {
+    moreBtn.addEventListener('click', function(){
+      shown += pageSize;
+      render();
+    });
+  }
+
+  render();
+})();
+</script>

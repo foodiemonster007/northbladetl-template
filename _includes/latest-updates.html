@@ -1,0 +1,12 @@
+{% comment %}
+  The newest chapters across all series, newest first, for the home page.
+  Change `limit: 20` to show more or fewer.
+{% endcomment %}
+<ul class="post-list">
+  {% for post in site.posts limit: 20 %}
+  <li>
+    <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+    <h3>{{ post.categories | first | upcase }} <a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+  </li>
+  {% endfor %}
+</ul>

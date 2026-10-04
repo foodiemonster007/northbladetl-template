@@ -1,0 +1,32 @@
+{% comment %}
+  Params: include.prev, include.next (post objects or nil), include.series (lowercase series tag)
+{% endcomment %}
+<div class="post_navi" style="font-size: 16px">
+  {% if include.prev %}
+    <a class="post_navi-item nav_prev" href="{{ include.prev.url | relative_url }}" title="{{ include.prev.title | escape }}">
+      <div class="post_navi-arrow">&lt;</div>
+      <div class="post_navi-label">Previous Chapter</div>
+      <div><span>{{ include.prev.title }}</span></div>
+    </a>
+  {% else %}
+    <a class="post_navi-item nav_prev" href="{{ include.series | upcase | prepend: '/' | append: '/' | relative_url }}" title="Chapters">
+      <div class="post_navi-arrow">&lt;</div>
+      <div class="post_navi-label">Chapters</div>
+      <div><span>Chapters</span></div>
+    </a>
+  {% endif %}
+
+  {% if include.next %}
+    <a class="post_navi-item nav_next" href="{{ include.next.url | relative_url }}" title="{{ include.next.title | escape }}">
+      <div class="post_navi-arrow">&gt;</div>
+      <div class="post_navi-label">Next Chapter</div>
+      <div><span>{{ include.next.title }}</span></div>
+    </a>
+  {% else %}
+    <a class="post_navi-item nav_next" href="{{ include.series | upcase | prepend: '/' | append: '/' | relative_url }}" title="Chapters">
+      <div class="post_navi-arrow">&gt;</div>
+      <div class="post_navi-label">Chapters</div>
+      <div><span>Chapters</span></div>
+    </a>
+  {% endif %}
+</div>

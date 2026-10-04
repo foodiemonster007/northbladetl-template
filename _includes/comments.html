@@ -1,0 +1,47 @@
+{% comment %}
+  Comment section, powered by giscus (GitHub Discussions).
+  Shown on pages with `comments: true`. Repo and category settings are under
+  `giscus:` in _config.yml.
+{% endcomment %}
+{% if page.comments %}
+<div id="comments"></div>
+<script>
+(function () {
+  var wrapper = document.getElementById('wrappertext');
+  var isDay = false;
+  try { isDay = localStorage.getItem('colorScheme') === 'day'; } catch (e) {}
+
+  var script = document.createElement('script');
+  script.src = 'https://giscus.app/client.js';
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.setAttribute('data-repo', '{{ site.giscus.repo }}');
+  script.setAttribute('data-repo-id', '{{ site.giscus.repo_id }}');
+  script.setAttribute('data-category', '{{ site.giscus.category }}');
+  script.setAttribute('data-category-id', '{{ site.giscus.category_id }}');
+  script.setAttribute('data-mapping', 'pathname');
+  script.setAttribute('data-strict', '0');
+  script.setAttribute('data-reactions-enabled', '1');
+  script.setAttribute('data-emit-metadata', '0');
+  script.setAttribute('data-input-position', 'top');
+  script.setAttribute('data-theme', isDay ? 'light' : 'dark');
+  script.setAttribute('data-lang', 'en');
+  script.setAttribute('data-loading', 'lazy');
+  document.getElementById('comments').appendChild(script);
+
+  // Switch the comment theme when the reader toggles Day/Night mode.
+  var modeButton = document.getElementById('setMode');
+  if (modeButton) {
+    modeButton.addEventListener('click', function () {
+      var frame = document.querySelector('iframe.giscus-frame');
+      if (!frame || !wrapper) return;
+      var theme = wrapper.classList.contains('day-mode') ? 'light' : 'dark';
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: theme } } },
+        'https://giscus.app'
+      );
+    });
+  }
+})();
+</script>
+{% endif %}

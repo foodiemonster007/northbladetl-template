@@ -1,0 +1,25 @@
+- title: Main Menu
+  subfolderitems:
+    - name: "Novels"
+      url: "#"
+      weight: 3
+      subsubfolderitems:
+        - name: "Sample Novel One"
+          url: "/ABC/"
+          weight: 2
+        - name: "Sample Novel Two"
+          url: "/XYZ/"
+          weight: 2
+    - name: "Notifications"
+      url: "#"
+      weight: 3
+      subsubfolderitems:
+        - name: "Discord"
+          url: "https://discord.gg/YOUR-INVITE"
+          weight: 2
+        - name: "Telegram"
+          url: "https://t.me/YOUR-CHANNEL"
+          weight: 2
+    - name: "About"
+      url: "/about.html"
+      weight: 2
