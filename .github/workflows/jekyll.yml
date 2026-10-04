@@ -31,7 +31,14 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
-          bundler-cache: true      # installs the gems in Gemfile and caches them
+
+      # Gemfile.lock is created on whoever ran `bundle install` (Windows, Mac...)
+      # and only lists that computer's platform. Add Linux, which this build uses,
+      # then install the gems.
+      - name: Install gems
+        run: |
+          bundle lock --add-platform x86_64-linux
+          bundle install
 
       - name: Set up Pages
         id: pages
