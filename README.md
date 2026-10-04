@@ -86,6 +86,15 @@ The template ships with two sample series (`ABC` and `XYZ`) as examples. Replace
 
 Search the project for the placeholder text below. Nothing here works until you do.
 
+**How to edit a file** (the same for every change in this guide):
+
+1. Open your project folder in Visual Studio Code. In GitHub Desktop click **Repository > Open in Visual Studio Code**.
+2. Open the file named in the instructions: press **Ctrl+P**, type the file name, press **Enter**.
+3. Press **Ctrl+F** to search inside the file. Find the text shown in the instructions and replace it with the new text. Copy text exactly, including quotes, brackets and spaces.
+4. Press **Ctrl+S** to save. If the site is running on your computer (Step 5), refresh http://localhost:4000 to see the change.
+
+Press **Ctrl+Shift+F** to search every file in the project at once. In `.yml` files and at the top of pages (between the `---` lines), use spaces, never the Tab key, and keep the indentation the same as the lines around it.
+
 | Replace | Where |
 | --- | --- |
 | `Your Site Title`, `https://example.com` | `_config.yml` (`title`, `url`) |
@@ -111,7 +120,11 @@ GitHub Pages hosts your site for free. Do these in order.
 
 Every time you edit your files and commit and push in GitHub Desktop, the site rebuilds and updates by itself in about a minute.
 
-If the build shows a red cross, click it and open the failed step to read the error. See [Deploying](#9-deploying) for more.
+If the build shows a red cross, click it and open the step marked with a red cross to read the message. It usually names the file and line. The usual causes are a missing quote, a missing `---` line at the top of a file, or Tab characters in a `.yml` file. See [Deploying](#9-deploying) for more.
+
+- **Your change is not showing:** wait a minute after pushing, then press **Ctrl+F5** in your browser. Check that you clicked both **Commit to main** and **Push origin**.
+- **You broke something and want to go back:** in GitHub Desktop click **History**, right-click the commit that caused the problem, choose **Revert Changes in Commit**, then click **Push origin**.
+- **File names are case-sensitive.** `ABC001.md` and `abc001.md` are different files.
 
 ## 2. Folder map
 
@@ -171,6 +184,16 @@ Each entry under `subfolderitems` becomes a menu button.
 - Replace the `YOUR-INVITE` and `YOUR-CHANNEL` placeholders with your Discord invite and Telegram channel, or delete those entries.
 - Add each new series to the "Novels" list.
 
+Each link inside a dropdown is these three lines:
+
+```
+        - name: "Text shown in the menu"
+          url: "https://example.com"
+          weight: 2
+```
+
+To add a link, copy a block of three lines and paste it under another one, then change the text and address. To remove a link, delete its three lines. To rename one, change the text in quotes after `name:`. Keep the spaces at the start of each line exactly as they are (never use the Tab key). For a page on your own site, use a path such as `/about.html` or `/MYNOVEL/` instead of a full address.
+
 ### Links under every chapter (`_layouts/post.html`)
 
 Look for "Subscribe to Updates via". It links to the RSS feed, Novel Updates, Discord, Telegram and email. Edit or remove any of them.
@@ -184,7 +207,7 @@ Holds the "Subscribe to all updates!" link and the optional description text.
 
 ### Analytics (`_includes/google-analytics.html`)
 
-Replace both `G-XXXXXXXXXX` values with your Google Analytics measurement ID, or empty the file to turn analytics off.
+Replace both `G-XXXXXXXXXX` values with your Google Analytics measurement ID. To turn analytics off, open the file, press **Ctrl+A** to select everything, press **Delete**, and save.
 
 ### Search and link-preview text (`_includes/head.html`)
 
@@ -260,7 +283,7 @@ Rules to follow:
 
 Chapter text is normal Markdown, with these extras:
 
-- `{sep}` on its own line becomes the scene-break image (`Images/sep.png`). Replace that file to change the separator.
+- `{sep}` on its own line becomes the scene-break image (`Images/sep.png`). To change the separator, replace `Images/sep.png` with your own PNG image, keeping the same file name.
 - A quote written as `> text` is shown in the quote colour (see [Colours](#5-colours)).
 - **Links to other pages on your site** must go through `relative_url`, or they break when the site is hosted in a subfolder. Write `[About]({{ '/about.html' | relative_url }})`, not `[About](/about.html)`. Links to other websites (`https://...`) are written normally.
 - Footnotes written with Markdown footnote syntax get a "Footnotes:" heading.
@@ -268,6 +291,14 @@ Chapter text is normal Markdown, with these extras:
 ## 5. Colours
 
 Every colour is a plain value (like `#b9b1d6`) in one of the files below. Use your editor's find-and-replace across the project to change one everywhere.
+
+To change a colour:
+
+1. Choose a colour and copy its code (it starts with `#`, for example `#ff8800`) from a colour picker such as https://htmlcolorcodes.com.
+2. Find what you want to change in the tables below. They give the file and the current code.
+3. Open that file, press **Ctrl+F**, search for the current code, replace it with yours, and press **Ctrl+S** to save.
+
+For example, to change the link colour, open `css/designs.css`, search for `#6fa8dc` and replace it. If the same code is used for one thing in several places (the header purple appears in both `css/designs.css` and `css/head.css`), change every one of them.
 
 ### Main palette
 
@@ -314,7 +345,39 @@ To recolour the header, change the same purple in `css/designs.css` and `css/hea
 
 ### Starting in day mode
 
-The site starts in night mode because the reading area has the `night-mode` class. Readers' Day/Night button choice is remembered in their browser.
+The site starts in night mode. Readers' Day/Night button choice is remembered in their browser.
+
+To make day mode the default instead, make two edits. Readers who have already pressed the Day/Night button keep their own choice; everyone else sees day mode.
+
+1. In `js/changeMode.js`, find:
+
+   ```
+   const savedColorScheme = localStorage.getItem("colorScheme");
+   ```
+
+   and change it to:
+
+   ```
+   const savedColorScheme = localStorage.getItem("colorScheme") || "day";
+   ```
+
+2. In `_includes/comments.html`, find these two lines:
+
+   ```
+   var isDay = false;
+   try { isDay = localStorage.getItem('colorScheme') === 'day'; } catch (e) {}
+   ```
+
+   and change them to:
+
+   ```
+   var isDay = true;
+   try { isDay = localStorage.getItem('colorScheme') !== 'night'; } catch (e) {}
+   ```
+
+   This makes the comment box start in its light theme too.
+
+The page may flash dark for a moment before switching. The strip of page background outside the reading area is set separately (see the first row of the Main palette table).
 
 ## 6. Fonts, sizes and layout
 
@@ -328,6 +391,13 @@ The site starts in night mode because the reading area has the `night-mode` clas
   3. Add a line for it in `FONT_STACKS` in `js/changeMode.js`.
   4. Add an `<option>` for it in `_includes/JS_buttons.html`.
 - To remove a font, delete it from the same four places.
+- To change the default font, open `js/changeMode.js`, press **Ctrl+F**, and find:
+
+  ```
+  const savedFont = localStorage.getItem("selectedFont") || "Helvetica";
+  ```
+
+  Replace `Helvetica` with one of `Helvetica`, `NotoSans`, `Literata`, `SFProText` or `Selawik`. Spell it exactly, with the capital letters, inside the quotes. Readers who have already picked a font keep their own choice.
 - Only use fonts you have the right to publish on the web.
 
 ### Sizes
@@ -340,6 +410,13 @@ The site starts in night mode because the reading area has the `night-mode` clas
 | Heading sizes inside pages | `.post-content h2` and similar in `assets/main.css` | `32px` / `26px` / `20px` |
 | Site width | `.wrapper` in `css/head.css` | `max-width: 740px` |
 | Menu button text | `.dropbtn` in `css/head.css` | `18px` |
+
+To change the default text size, make the same edit in two places, using your own number instead of `18`:
+
+1. In `_layouts/post.html`, find `style="font-size: 16px;"` and change it to `style="font-size: 18px;"`.
+2. In `js/changeMode.js`, find `? "16px"` and change it to `? "18px"`. This is the size the **A** button resets to.
+
+To change the width of the site, open `css/head.css`, find the first `max-width: 740px;` (inside `.wrapper`) and change the number. A bigger number gives wider lines of text.
 
 ### Layout details
 
@@ -355,6 +432,8 @@ The site starts in night mode because the reading area has the `night-mode` clas
 ### Reader Settings panel
 
 The panel above each chapter lets readers change day/night mode, font and font size. Their choices are saved in the browser and re-applied on every page. The buttons are in `_includes/JS_buttons.html` and the behaviour is in `js/changeMode.js`.
+
+To remove the panel, open `_layouts/post.html` and delete the line `{% include JS_buttons.html %}`.
 
 ### Continue reading
 
@@ -372,6 +451,22 @@ The bookmark only moves forward, so finishing an earlier chapter does not replac
 - The **Newest First / Oldest First** button reverses the whole list. The reader's choice is remembered in the browser.
 - The 100 is `toc_per_page` in `_config.yml` and applies to every series. A single series can use a different number with `per_page:` in its own `index.md`.
 
+To change that number for every series, open `_config.yml` and change the number in `toc_per_page: 100`. To change it for one series, add a line such as `per_page: 50` between the `---` lines at the top of that series' `index.md`.
+
+To show the newest chapters first by default, open `_includes/series-toc.html`, press **Ctrl+F**, and find:
+
+```
+try { newestFirst = localStorage.getItem('tocSortOrder') === 'newest'; } catch (e) {}
+```
+
+Change `=== 'newest'` to `!== 'oldest'`:
+
+```
+try { newestFirst = localStorage.getItem('tocSortOrder') !== 'oldest'; } catch (e) {}
+```
+
+The sort button's text changes to match by itself. Readers who have already pressed the button keep their own choice.
+
 ## 8. Comments
 
 Comments use [giscus](https://giscus.app), which stores each comment thread as a GitHub Discussion. The code is in `_includes/comments.html`, and its settings are the `giscus:` block in `_config.yml`.
@@ -383,7 +478,7 @@ The `giscus:` values in `_config.yml` belong to the template's author. Replace a
 3. Go to https://giscus.app, enter `user/repo`, pick a Discussions category, and leave Mapping on **pathname**.
 4. Copy `data-repo`, `data-repo-id`, `data-category` and `data-category-id` from the snippet giscus generates into `_config.yml`.
 
-A page shows comments only if its front matter has `comments: true`. Set it to `false` or remove it to hide them. The comment theme follows the Day/Night button. Threads are tied to the page's web address, so renaming a chapter starts a new thread.
+A page shows comments only if its front matter (the lines between the `---` marks at the top of the file) has `comments: true`. To hide comments on one page or chapter, change it to `comments: false`. To turn comments off everywhere, delete the line `{% include comments.html %}` at the end of `_layouts/post.html`, `_layouts/page.html` and `_layouts/series.html`. The comment theme follows the Day/Night button. Threads are tied to the page's web address, so renaming a chapter starts a new thread.
 
 ## 9. Deploying
 
